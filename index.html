@@ -1,1 +1,319 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Group Assigner</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .group-list {
+            margin-top: 20px;
+        }
+
+        .group-item {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            background: linear-gradient(145deg, #f5f5f5, #ffffff);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .group-item h4 {
+            color: #333;
+        }
+
+        .group-item ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .group-item ul li {
+            background-color: #eee;
+            border-radius: 5px;
+            padding: 8px;
+            margin-bottom: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .group-item .leader {
+            color: green;
+            font-weight: bold;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+        }
+
+        .student-item {
+            background-color: #f0f8ff;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-item i {
+            margin-right: 8px;
+        }
+
+        #uploadInput, #uploadGroupInput {
+            display: none;
+        }
+
+        #exportTitle {
+            margin-bottom: 20px;
+        }
+
+        #exportTitleInput {
+            margin-bottom: 20px;
+        }
+
+        .export-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Student Group Assigner</h1>
+
+        <form id="studentForm">
+            <div class="form-group">
+                <label for="studentName">Enter Student Name:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="studentName" placeholder="John Doe">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" onclick="addStudent()">
+                            <i class="fas fa-user-plus"></i> Add Student
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="form-group mt-4">
+            <label for="groupName">Enter Group Name:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="groupName" placeholder="Group A">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" onclick="addGroup()">
+                        <i class="fas fa-users-cog"></i> Set Group
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="uploadInput">Upload Student Names from Excel:</label>
+            <input type="file" id="uploadInput" accept=".xlsx" onchange="handleFileUpload(event, 'students')">
+            <button type="button" class="btn btn-info" onclick="document.getElementById('uploadInput').click();">
+                <i class="fas fa-file-excel"></i> Upload Students Excel
+            </button>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="uploadGroupInput">Upload Group Names from Excel:</label>
+            <input type="file" id="uploadGroupInput" accept=".xlsx" onchange="handleFileUpload(event, 'groups')">
+            <button type="button" class="btn btn-info" onclick="document.getElementById('uploadGroupInput').click();">
+                <i class="fas fa-file-excel"></i> Upload Groups Excel
+            </button>
+        </div>
+
+        <div class="form-group mt-4" id="exportTitleInput">
+            <label for="imageTitle">Image Title:</label>
+            <input type="text" class="form-control" id="imageTitle" placeholder="Enter title for image">
+        </div>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-success" onclick="randomizeGroups()">
+                <i class="fas fa-random"></i> Randomize
+            </button>
+        </div>
+
+        <div id="studentsList" class="mt-4">
+            <h2>Student List</h2>
+            <div id="students"></div>
+        </div>
+
+        <div id="groupsList" class="mt-4">
+            <h2>Groups</h2>
+            <div id="groups" class="row group-list"></div>
+        </div>
+
+        <div class="btn-group mt-4">
+            <button type="button" class="btn btn-primary" onclick="exportToImage()">
+                <i class="fas fa-download"></i> Export to Image
+            </button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script>
+        let students = [];
+        let groups = [];
+
+        function addStudent() {
+            const studentName = document.getElementById('studentName').value.trim();
+            if (studentName) {
+                students.push(studentName);
+                document.getElementById('studentName').value = '';
+                updateStudentsList();
+            }
+        }
+
+        function addGroup() {
+            const groupName = document.getElementById('groupName').value.trim();
+            if (groupName) {
+                groups.push({ name: groupName, members: [], leader: '' });
+                document.getElementById('groupName').value = '';
+                updateGroupsList();
+            }
+        }
+
+        function randomizeGroups() {
+            if (students.length === 0 || groups.length === 0) return;
+
+            // Shuffle students
+            for (let i = students.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [students[i], students[j]] = [students[j], students[i]];
+            }
+
+            // Clear existing group members
+            groups.forEach(group => group.members = []);
+
+            // Distribute students to groups
+            students.forEach((student, index) => {
+                const groupIndex = index % groups.length;
+                groups[groupIndex].members.push(student);
+            });
+
+            // Randomly assign leaders
+            groups.forEach(group => {
+                if (group.members.length > 0) {
+                    const leaderIndex = Math.floor(Math.random() * group.members.length);
+                    group.leader = group.members[leaderIndex];
+                }
+            });
+
+            updateGroupsList();
+        }
+
+        function updateStudentsList() {
+            const studentsList = document.getElementById('students');
+            studentsList.innerHTML = '';
+            students.forEach(student => {
+                const studentDiv = document.createElement('div');
+                studentDiv.className = 'student-item';
+                studentDiv.innerHTML = `<i class="fas fa-user"></i> ${student}`;
+                studentsList.appendChild(studentDiv);
+            });
+        }
+
+        function updateGroupsList() {
+            const groupsContainer = document.getElementById('groups');
+            groupsContainer.innerHTML = '';
+
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'col-md-3 group-item';
+
+                // Check if the group has a leader
+                const leaderText = group.leader ? ` (Leader: ${group.leader})` : '';
+
+                groupDiv.innerHTML = `
+                    <h4><i class="fas fa-users"></i>${group.name}${leaderText}</h4>
+                    <ul>${group.members.map(member => `<li>${member}</li>`).join('')}</ul>
+                `;
+                groupsContainer.appendChild(groupDiv);
+            });
+        }
+
+        function handleFileUpload(event, type) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    // Process student names
+                    if (type === 'students') {
+                        processStudentNames(json);
+                    } else if (type === 'groups') {
+                        processGroupNames(json);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function processStudentNames(json) {
+            const headers = json[0];
+            const nameColumnIndex = headers.findIndex(header => /name/i.test(header));
+
+            if (nameColumnIndex === -1) {
+                alert('No column with a title matching "name" found.');
+                return;
+            }
+
+            const names = json.slice(1).map(row => row[nameColumnIndex]).filter(name => name);
+
+            // Update student list
+            students.push(...names);
+            updateStudentsList();
+        }
+
+        function processGroupNames(json) {
+            const headers = json[0];
+            const titleColumnIndex = headers.findIndex(header => /group/i.test(header));
+
+            if (titleColumnIndex === -1) {
+                alert('No column with a title matching "Group" found.');
+                return;
+            }
+
+            const groupsData = json.slice(1).map(row => row[titleColumnIndex]).filter(group => group);
+
+            // Clear existing groups and update with new ones
+            groups = groupsData.map(groupName => ({ name: groupName, members: [], leader: '' }));
+            updateGroupsList();
+        }
+
+        function exportToImage() {
+            const title = document.getElementById('imageTitle').value.trim();
+            const groupsList = document.getElementById('groupsList');
+
+            // Create a new div for the title
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'export-title';
+            titleDiv.textContent = title;
+
+            // Insert title above the groups list
+            groupsList.insertBefore(titleDiv, groupsList.firstChild);
+
+            html2canvas(groupsList).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'groups.png';
+                link.click();
+
+                // Remove the title div after exporting
+                groupsList.removeChild(titleDiv);
+            });
+        }
+    </script>
+</body>
+</html>
