@@ -289,13 +289,9 @@
         }
 
         function exportToImage() {
-            const title = document.getElementById('imageTitle').value.trim();
-            const groupsList = document.getElementById('groupsList');
+         
 
-            // Create a new div for the title
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'export-title';
-            titleDiv.textContent = title;
+       
 
             // Insert title above the groups list
             groupsList.insertBefore(titleDiv, groupsList.firstChild);
@@ -303,6 +299,7 @@
             html2canvas(groupsList).then(canvas => {
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png');
+                
                 link.download = 'groups.png';
                 link.click();
 
