@@ -18,6 +18,16 @@
             margin-top: 20px;
         }
 
+
+        #groupsList {
+    border: 2px solid #4b69ff;
+    border-radius: 10px;
+     /* Example border style */
+    padding: 30px; /* Add padding to ensure the border doesn't overlap content */
+    box-sizing: border-box; /* Include border in the element's total width and height */
+}
+
+
         .group-item {
             border: 2px solid #ddd;
             border-radius: 10px;
@@ -140,11 +150,16 @@
         </div>
 
     
+<div id="full_group">
 
+  
         <div id="groupsList" class="mt-4">
             <h2>Groups</h2>
             <div id="groups" class="row group-list"></div>
         </div>
+
+    </div>
+
 
         <div class="btn-group mt-4">
             <button type="button" class="btn btn-primary" onclick="exportToImage()">
@@ -376,15 +391,40 @@ function exportToText() {
 
 
 function exportToImage() {
-    const groupsList = document.getElementById('groupsList');
+    const groupsList = document.getElementById('full_group');
+
+    // Temporarily apply the border and background styles
+    const originalStyles = {
+     
+        backgroundColor: groupsList.style.backgroundColor,
+        padding: groupsList.style.padding,
+        boxSizing: groupsList.style.boxSizing
+    };
+
+    // Set new styles for exporting
+   
+    groupsList.style.backgroundColor = '#f9f9f9'; // Example background color
+    groupsList.style.padding = '10px';
+    groupsList.style.boxSizing = 'border-box';
+    groupsList.style.margin = '10px';    
+
+
+
 
     // Use html2canvas to capture the groupsList element as an image
     html2canvas(groupsList).then(canvas => {
         // Create a download link for the image
+        
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png');
         link.download = 'groups.png';
         link.click();
+        
+        // Reset styles after exporting
+     
+        groupsList.style.backgroundColor = originalStyles.backgroundColor;
+        groupsList.style.padding = originalStyles.padding;
+        groupsList.style.boxSizing = originalStyles.boxSizing;
     });
 }
 
