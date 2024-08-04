@@ -228,16 +228,21 @@
             updateGroupsList();
         }
 
+
         function updateStudentsList() {
-            const studentsList = document.getElementById('students');
-            studentsList.innerHTML = '';
-            students.forEach(student => {
-                const studentDiv = document.createElement('div');
-                studentDiv.className = 'student-item';
-                studentDiv.innerHTML = `<i class="fas fa-user"></i> ${student}`;
-                studentsList.appendChild(studentDiv);
-            });
-        }
+    const studentsList = document.getElementById('students');
+    studentsList.innerHTML = '';
+    
+    // Add numbering to the students list
+    students.forEach((student, index) => {
+        const studentDiv = document.createElement('div');
+        studentDiv.className = 'student-item';
+        studentDiv.innerHTML = `<i class="fas fa-user"></i> ${index + 1}. ${student}`;
+        studentsList.appendChild(studentDiv);
+    });
+}
+
+
 
         function updateGroupsList() {
     const groupsContainer = document.getElementById('groups');
@@ -252,15 +257,20 @@
         // Calculate total number of members
         const totalMembers = group.members.length;
 
+        // Add numbering to members list
+        const membersList = group.members.map((member, index) => `<li>${index + 1}. ${member}</li>`).join('');
+
         groupDiv.innerHTML = `
             <h4><i class="fas fa-users"></i> ${group.name}</h4>
             <h6>${leaderText}</h6>
             <p>Total Members: ${totalMembers}</p>
-            <ul>${group.members.map(member => `<li>${member}</li>`).join('')}</ul>
+            <ul>${membersList}</ul>
         `;
         groupsContainer.appendChild(groupDiv);
     });
 }
+
+
 
         function handleFileUpload(event, type) {
             const file = event.target.files[0];
@@ -319,8 +329,8 @@
 
 
 
-    function exportToExcel() {
-    // Create a workbook and add a worksheet
+        function exportToExcel() {
+    // Create a new workbook and add a worksheet
     const workbook = XLSX.utils.book_new();
     const worksheetData = [];
 
@@ -329,7 +339,7 @@
 
     // Add data rows
     groups.forEach(group => {
-        const members = group.members.join(', ');
+        const members = group.members.join(', '); // Join members with a comma
         worksheetData.push([group.name, group.leader || '', members]);
     });
 
