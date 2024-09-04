@@ -1,3 +1,3 @@
 # RandomG
-RandomG
- https://puyvongheng.github.io/RandomG/
+open
+# https://puyvongheng.github.io/RandomG/
