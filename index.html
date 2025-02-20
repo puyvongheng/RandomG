@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Group Assigner</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Khmer+Mole&display=swap" rel="stylesheet">
+
     <style>
+
+        h1 {
+    font-family: 'Moul', sans-serif;
+}
         body {
             font-family: 'Battambang', sans-serif;
             margin: 20px;
@@ -19,15 +27,7 @@
         }
 
 
-        #groupsList {
-    border: 2px solid #4b69ff;
-    border-radius: 10px;
-     /* Example border style */
-    padding: 30px; /* Add padding to ensure the border doesn't overlap content */
-    box-sizing: border-box; /* Include border in the element's total width and height */
-}
-
-
+   
         .group-item {
             border: 2px solid #ddd;
             border-radius: 10px;
@@ -46,36 +46,15 @@
             padding: 0;
         }
 
-        .group-item ul li {
-            background-color: #eee;
-            border-radius: 5px;
-            padding: 8px;
-            margin-bottom: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        }
 
-        .group-item .leader {
-            color: green;
-            font-weight: bold;
-        }
-
-        .btn-group {
-            margin-top: 20px;
-        }
-
-        .student-item {
-            background-color: #f0f8ff;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        }
+     
 
         .student-item i {
             margin-right: 8px;
         }
 
-        #uploadInput, #uploadGroupInput {
+        #uploadInput,
+        #uploadGroupInput {
             display: none;
         }
 
@@ -94,93 +73,102 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Student Group</h1>
+        <h1 class="text-center">ចាប់ក្រុម</h1>
 
         <form id="studentForm">
             <div class="form-group">
-                <label for="studentName">Enter Student Name:</label>
+                <label for="studentName">បញ្ចូលឈ្មោះ:</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="studentName" placeholder="John Doe">
+                    <input type="text" class="form-control" id="studentName" placeholder="ឈ្មោះ">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-primary" onclick="addStudent()">
-                            <i class="fas fa-user-plus"></i> Add Student
+                            <i class="fas fa-user-plus"></i> Add 
+                        </button>
+
+                        <input type="file" id="uploadInput" accept=".xlsx" onchange="handleFileUpload(event, 'students')">
+                        <button type="button" style="border-radius:  0px 100px 100px 0px;" class="btn btn-info" onclick="document.getElementById('uploadInput').click();">
+                            <i class="fas fa-file-excel"></i> Upload Excel
                         </button>
                     </div>
+
+                
+
                 </div>
             </div>
         </form>
 
-        <div class="form-group mt-4">
-            <label for="groupName">Enter Group Name:</label>
+    <div class="form-group mt-4">
+            <label for="groupName">បញ្ចូលក្រុម:</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="groupName" placeholder="Group A">
+                <input type="text" class="form-control" id="groupName" placeholder="ក្រុម">
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-secondary" onclick="addGroup()">
-                        <i class="fas fa-users-cog"></i> Set Group
+                    <button type="button" class="btn btn-primary" onclick="addGroup()">
+                        <i class="fas fa-users-cog"></i> Add
                     </button>
+
+                    <input type="file" id="uploadGroupInput" accept=".xlsx" onchange="handleFileUpload(event, 'groups')">
+                    <button style="border-radius:  0px 100px 100px 0px;" type="button" class="btn btn-info" onclick="document.getElementById('uploadGroupInput').click();">
+                        <i class="fas fa-file-excel"></i> Upload  Excel
+                    </button>
+
                 </div>
             </div>
-        </div>
+    </div>
 
-        <div class="form-group mt-4">
-            <label for="uploadInput">Upload Student Names from Excel:</label>
-            <input type="file" id="uploadInput" accept=".xlsx" onchange="handleFileUpload(event, 'students')">
-            <button type="button" class="btn btn-info" onclick="document.getElementById('uploadInput').click();">
-                <i class="fas fa-file-excel"></i> Upload Students Excel
+   
+
+<!--btn rendom-->
+
+    <div class="btn-group​ ">
+            <button style="width: 100%; border-radius: 500px; background-color: #4b69ff; color: #eee;" type="button" class="btn " onclick="randomizeGroups()">
+                <i class="fas fa-random"></i> Random
             </button>
-        </div>
+    </div>
+        
 
-        <div class="form-group mt-4">
-            <label for="uploadGroupInput">Upload Group Names from Excel:</label>
-            <input type="file" id="uploadGroupInput" accept=".xlsx" onchange="handleFileUpload(event, 'groups')">
-            <button type="button" class="btn btn-info" onclick="document.getElementById('uploadGroupInput').click();">
-                <i class="fas fa-file-excel"></i> Upload Groups Excel
-            </button>
-        </div>
-
-
-    
-
-        <div class="btn-group">
-            <button type="button" class="btn btn-success" onclick="randomizeGroups()">
-                <i class="fas fa-random"></i> Randomize
-            </button>
-        </div>
-
-    
-<div id="full_group">
-
-  
-        <div id="groupsList" class="mt-4">
-            <h2>Groups</h2>
-            <div id="groups" class="row group-list"></div>
-        </div>
-
+<!--group-->
+    <div id="full_group">
+            <div id="groupsList" class="mt-4">
+                <h2>ក្រុម</h2>
+                <div id="groups" class="row group-list"></div>
+            </div>
     </div>
 
 
-        <div class="btn-group mt-4">
-            <button type="button" class="btn btn-primary" onclick="exportToImage()">
+<!-- save btn-->
+        <hr>
+    <div class="btn-group mt-4">
+            <button  style=" border-radius: 500px;" type="button" class="btn btn-primary m-1" onclick="exportToImage()">
                 <i class="fas fa-download"></i> Export to Image
             </button>
-            <button type="button" class="btn btn-warning" onclick="exportToExcel()">
+            <button  style=" border-radius: 500px;" type="button" class="btn btn-primary m-1" onclick="exportToExcel()">
                 <i class="fas fa-file-excel"></i> Export to Excel
             </button>
 
-            <button type="button" class="btn btn-secondary" onclick="exportToText()">
+            <button  style=" border-radius: 500px;" type="button" class="btn btn-primary m-1" onclick="exportToText()">
                 <i class="fas fa-file-alt"></i> Export to Text
             </button>
-            
-            
-        </div>
+    </div>
+        <hr>
 
 
-        <div id="studentsList" class="mt-4">
-            <h2>Student List</h2>
-            <div id="students"></div>
-        </div>
+
+<!--studen-->
+    <div id="studentsList" class="mt-4">
+        <h2>Student List</h2>
+        <table class="table table-bordered" id="studentsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student Name</th>
+                </tr>
+            </thead>
+            <tbody id="students"></tbody>
+        </table>
+    </div>
 
 
 
@@ -244,46 +232,56 @@
         }
 
 
-        function updateStudentsList() {
-    const studentsList = document.getElementById('students');
-    studentsList.innerHTML = '';
-    
-    // Add numbering to the students list
-    students.forEach((student, index) => {
-        const studentDiv = document.createElement('div');
-        studentDiv.className = 'student-item';
-        studentDiv.innerHTML = `<i class="fas fa-user"></i> ${index + 1}. ${student}`;
-        studentsList.appendChild(studentDiv);
-    });
-}
+    function updateStudentsList() {
+            const studentsList = document.getElementById('students');
+            studentsList.innerHTML = ''; // Clear existing rows
+
+        // Show alert to indicate the list is being updated
+        alert("ជោជ័យ");
+
+            // Add numbering to the students list and create table rows
+            students.forEach((student, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${student}</td>
+        `;
+                studentsList.appendChild(row);
+            });
+        }
 
 
 
         function updateGroupsList() {
-    const groupsContainer = document.getElementById('groups');
-    groupsContainer.innerHTML = '';
+            const groupsContainer = document.getElementById('groups');
+            groupsContainer.innerHTML = '';
 
-    groups.forEach(group => {
-        const groupDiv = document.createElement('div');
-        groupDiv.className = 'col-md-3 group-item';
+               // Show alert to indicate the list is being updated
+            alert("ជោជ័យ");
 
-        // Check if the group has a leader
-        const leaderText = group.leader ? ` (Leader: ${group.leader})` : '';
-        // Calculate total number of members
-        const totalMembers = group.members.length;
 
-        // Add numbering to members list
-        const membersList = group.members.map((member, index) => `<li>${index + 1}. ${member}</li>`).join('');
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'col-md-3 group-item';
 
-        groupDiv.innerHTML = `
+                // Check if the group has a leader
+                const leaderText = group.leader ? ` (មេក្រុម: ${group.leader})` : '';
+                // Calculate total number of members
+                const totalMembers = group.members.length;
+
+                // Add numbering to members list
+                const membersList = group.members.map((member, index) => `<li>${index + 1}. ${member}</li>`).join('');
+
+                groupDiv.innerHTML = `
             <h4><i class="fas fa-users"></i> ${group.name}</h4>
             <h6>${leaderText}</h6>
-            <p>Total Members: ${totalMembers}</p>
+            <p>ចំនូន: ${totalMembers} នាក់</p>
+
             <ul>${membersList}</ul>
         `;
-        groupsContainer.appendChild(groupDiv);
-    });
-}
+                groupsContainer.appendChild(groupDiv);
+            });
+        }
 
 
 
@@ -291,7 +289,7 @@
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     const sheetName = workbook.SheetNames[0];
@@ -344,99 +342,91 @@
 
 
 
+
+
+
         function exportToExcel() {
-    // Create a new workbook and add a worksheet
-    const workbook = XLSX.utils.book_new();
-    const worksheetData = [];
+            // Create a new workbook and add a worksheet
+            const workbook = XLSX.utils.book_new();
+            const worksheetData = [];
 
-    // Add header row
-    worksheetData.push(['Group Name', 'Leader', 'Members']);
+            // Add header row
+            worksheetData.push(['Group Name', 'Leader', 'Members']);
 
-    // Add data rows
-    groups.forEach(group => {
-        const members = group.members.join(', '); // Join members with a comma
-        worksheetData.push([group.name, group.leader || '', members]);
-    });
+            // Add data rows
+            groups.forEach(group => {
+                const members = group.members.join(', '); // Join members with a comma
+                worksheetData.push([group.name, group.leader || '', members]);
+            });
 
-    // Convert the data to a worksheet
-    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            // Convert the data to a worksheet
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Groups');
+            // Append the worksheet to the workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Groups');
 
-    // Generate Excel file and trigger download
-    XLSX.writeFile(workbook, 'groups.xlsx');
-}
-
-
-
-function exportToText() {
-    let textContent = 'Group Name\tLeader\tMembers\n'; // Header
-
-    groups.forEach(group => {
-        const members = group.members.join(', ');
-        textContent += `${group.name}\t${group.leader || ''}\t${members}\n`;
-    });
-
-    const blob = new Blob([textContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'groups.txt';
-    link.click();
-    URL.revokeObjectURL(url);
-}
+            // Generate Excel file and trigger download
+            XLSX.writeFile(workbook, 'groups.xlsx');
+        }
 
 
 
+        function exportToText() {
+            let textContent = 'Group Name\tLeader\tMembers\n'; // Header
 
-function exportToImage() {
-    const groupsList = document.getElementById('full_group');
+            groups.forEach(group => {
+                const members = group.members.join(', ');
+                textContent += `${group.name}\t${group.leader || ''}\t${members}\n`;
+            });
 
-    // Temporarily apply the border and background styles
-    const originalStyles = {
-     
-        backgroundColor: groupsList.style.backgroundColor,
-        padding: groupsList.style.padding,
-        boxSizing: groupsList.style.boxSizing
-    };
-
-    // Set new styles for exporting
-   
-    groupsList.style.backgroundColor = '#f9f9f9'; // Example background color
-    groupsList.style.padding = '10px';
-    groupsList.style.boxSizing = 'border-box';
-    groupsList.style.margin = '10px';    
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'groups.txt';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
 
 
 
 
-    // Use html2canvas to capture the groupsList element as an image
-    html2canvas(groupsList).then(canvas => {
-        // Create a download link for the image
-        
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'groups.png';
-        link.click();
-        
-        // Reset styles after exporting
-     
-        groupsList.style.backgroundColor = originalStyles.backgroundColor;
-        groupsList.style.padding = originalStyles.padding;
-        groupsList.style.boxSizing = originalStyles.boxSizing;
-    });
-}
+        function exportToImage() {
+            const groupsList = document.getElementById('full_group');
+
+            // Temporarily apply the border and background styles
+            const originalStyles = {
+
+                backgroundColor: groupsList.style.backgroundColor,
+                padding: groupsList.style.padding,
+                boxSizing: groupsList.style.boxSizing
+            };
+
+            // Set new styles for exporting
+
+            groupsList.style.backgroundColor = '#f9f9f9'; // Example background color
+            groupsList.style.padding = '10px';
+            groupsList.style.boxSizing = 'border-box';
+            groupsList.style.margin = '10px';
+
+            // Use html2canvas to capture the groupsList element as an image
+            html2canvas(groupsList).then(canvas => {
+                // Create a download link for the image
+
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'groups.png';
+                link.click();
+                // Reset styles after exporting
+                groupsList.style.backgroundColor = originalStyles.backgroundColor;
+                groupsList.style.padding = originalStyles.padding;
+                groupsList.style.boxSizing = originalStyles.boxSizing;
+            });
+        }
 
 
-       
+
     </script>
 </body>
+
 </html>
-
-
-
-
-
-
-
